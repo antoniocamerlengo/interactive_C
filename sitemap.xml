@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://antoniocamerlengo.github.io/interactive_C/</loc>
+    <priority>1.0</priority>
+  </url>
+
+  <url>
+    <loc>https://antoniocamerlengo.github.io/interactive_C/main.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://antoniocamerlengo.github.io/interactive_C/memoria.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://antoniocamerlengo.github.io/interactive_C/stdio.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://antoniocamerlengo.github.io/interactive_C/ifelse.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://antoniocamerlengo.github.io/interactive_C/for.html</loc>
+    <priority>0.8</priority>
+  </url>
+  
+  <url>
+    <loc>https://antoniocamerlengo.github.io/interactive_C/while.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+  <url>
+    <loc>https://antoniocamerlengo.github.io/interactive_C/dowhile.html</loc>
+    <priority>0.8</priority>
+  </url>
+
+</urlset>
