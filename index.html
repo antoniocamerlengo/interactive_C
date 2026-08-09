@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LINGUAGGIO C </title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --white: #ffffff;
+            --muted: #9a9a9a;
+            --dim: #555555;
+            --line: #292929;
+            --green: #00ff88;
+            --red: #ff304f;
+            --keyword: #a78bfa;
+            --type: #ffb86c;
+            --number: #50fa7b;
+            --function: #8be9fd;
+            --cyan: #8be9fd;
+            --magenta: #ff79c6;
+            --text: #d8d8d8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html, body { width: 100%; height: 100%; background: #000000; font-family: "JetBrains Mono", monospace; color: var(--white); overflow-x: hidden; }
+        
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.3) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+            z-index: 999;
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.50; 
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--line);
+            padding-bottom: 20px;
+        }
+
+        .brand-logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--white);
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.2);
+        }
+        .brand-logo span { 
+            color: var(--cyan); 
+            text-shadow: 0 0 12px rgba(139, 233, 253, 0.8);
+        }
+
+        .author-badge {
+            font-size: 11px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            border: 1px solid var(--line);
+            padding: 6px 12px;
+            background: #050505;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.05);
+            transition: all 0.3s ease;
+        }
+        .author-badge:hover {
+            border-color: var(--green);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+        .author-badge strong { 
+            color: var(--green); 
+            font-weight: 600; 
+            text-shadow: 0 0 8px rgba(0, 255, 136, 0.6);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 60px 0 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .hero-eyebrow {
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--magenta);
+            text-shadow: 0 0 12px rgba(ff, 121, 198, 0.7);
+            animation: eyebrowPulse 3s infinite ease-in-out;
+        }
+
+        .hero h1 {
+            font-size: clamp(36px, 6vw, 64px);
+            font-weight: 700;
+            letter-spacing: -2px;
+            line-height: 1.1;
+        }
+
+        .hero h1 span {
+            color: var(--cyan);
+            display: inline-block;
+            animation: neonGlow 2.5s infinite alternate ease-in-out, glitchFlicker 7s infinite;
+        }
+
+        .hero p {
+            max-width: 700px;
+            color: var(--text);
+            font-size: 15px;
+            line-height: 1.8;
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .cta-box {
+            margin-top: 10px;
+        }
+
+        .btn-exec {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 28px;
+            background: #050505;
+            color: var(--green);
+            border: 1px solid var(--green);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            animation: btnBorderPulse 2.5s infinite ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-exec:hover {
+            background: var(--green);
+            color: #000000;
+            box-shadow: 0 0 35px rgba(0,255,136,0.7);
+            transform: scale(1.03);
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: #030303;
+            border: 1px solid var(--line);
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            opacity: 0.3;
+            transition: opacity 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: var(--cyan);
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), 0 0 20px rgba(139, 233, 253, 0.15);
+        }
+
+        .card:hover::before {
+            opacity: 1;
+            box-shadow: 0 0 10px var(--cyan);
+        }
+
+        .card-num {
+            font-size: 10px;
+            color: var(--muted);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--white);
+            transition: color 0.3s ease, text-shadow 0.3s ease;
+        }
+
+        .card:hover h3 {
+            color: var(--cyan);
+            text-shadow: 0 0 10px rgba(139, 233, 253, 0.5);
+        }
+
+        .card p {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.7;
+        }
+
+        footer {
+            border-top: 1px solid var(--line);
+            padding-top: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: var(--muted);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        footer strong {
+            color: var(--white);
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.4);
+        }
+
+        @keyframes neonGlow {
+            0% {
+                text-shadow: 0 0 10px rgba(139,233,253,0.5),
+                             0 0 20px rgba(139,233,253,0.3),
+                             0 0 30px rgba(139,233,253,0.2);
+            }
+            100% {
+                text-shadow: 0 0 20px rgba(139,233,253,0.9),
+                             0 0 35px rgba(139,233,253,0.7),
+                             0 0 50px rgba(139,233,253,0.5),
+                             0 0 75px rgba(139,233,253,0.3);
+            }
+        }
+
+        @keyframes glitchFlicker {
+            0%, 100% { opacity: 1; }
+            92% { opacity: 1; }
+            93% { opacity: 0.7; transform: skewX(-1deg); }
+            94% { opacity: 1; transform: skewX(0deg); }
+            96% { opacity: 0.85; }
+            97% { opacity: 1; }
+        }
+
+        @keyframes eyebrowPulse {
+            0%, 100% { opacity: 0.8; text-shadow: 0 0 8px rgba(255, 121, 198, 0.4); }
+            50% { opacity: 1; text-shadow: 0 0 18px rgba(255, 121, 198, 0.9); }
+        }
+
+        @keyframes btnBorderPulse {
+            0%, 100% { 
+                box-shadow: 0 0 10px rgba(0,255,136,0.1); 
+                border-color: rgba(0, 255, 136, 0.6);
+            }
+            50% { 
+                box-shadow: 0 0 22px rgba(0,255,136,0.35); 
+                border-color: rgba(0, 255, 136, 1);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .container { padding: 20px 16px; }
+            header { flex-direction: column; gap: 12px; align-items: flex-start; }
+            footer { flex-direction: column; gap: 10px; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+    <div class="container">
+        <header>
+            <div class="brand-logo">C_LANGUAGE <span>101</span></div>
+            <div class="author-badge">Sviluppato da <strong>Antonio Camerlengo</strong></div>
+        </header>
+
+        <section class="hero">
+            <div class="hero-eyebrow">// IL LINGUAGGIO ALPHA</div>
+            <h1>IL PADRE DI <span>TUTTO IL CODICE</span></h1>
+            <p>Il C non e' solo il uno tra i linguaggi di programmazione. E' la base su cui si regge tutta l'infrastruttura informatica mondiale.</p>
+            <div class="cta-box">
+                <a href="main.html" class="btn-exec">&gt; START LEARNING</a>
+            </div>
+        </section>
+
+        <div class="sections-grid">
+            <div class="card">
+                <div class="card-num">01 · ORIGINI</div>
+                <h3>Storia del C</h3>
+                <p>Nato nei laboratori Bell da Dennis Ritchie, il C ha rivoluzionato l'informatica grazie alla quantita' di cose implementabili e al controllo assoluto sull'hardware che egli offre. Progettato originariamente per riscrivere il sistema operativo Unix, è diventato la base dei sistemi operativi, dei driver e dei sistemi embedded odierni.</p>
+            </div>
+            <div class="card">
+                <div class="card-num">02 · POTENZA</div>
+                <h3>Lati Positivi</h3>
+                <p>Velocità, efficienza e controllo assoluto della memoria RAM. Il C offre un'interazione profonda con l'hardware senza nessun layer di protezione, garantendo performance che nessun linguaggio di alto livello potrà mai eguagliare.</p>
+            </div>
+            <div class="card">
+                <div class="card-num">03 · DISCIPLINA</div>
+                <h3>Lati Negativi / Sfide</h3>
+                <p>Nessun garbage collector automatico, nessun aiuto allo sviluppo. Le criticità del C non sono difetti, ma sfide che solo i veri programmatori sanno dominare senza mettere a rischio l'integrita' o la sicurezza delle infrastrutture pur garantendo performance incredibili.</p>
+            </div>
+        </div>
+
+        <footer>
+            <div>&copy; 2026 C LANGUAGE</div>
+            <div>AUTORE: <strong>ANTONIO CAMERLENGO</strong></div>
+        </footer>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let width, height;
+        let particles = [];
+        let mouse = { x: null, y: null, radius: 150 };
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+
+        window.addEventListener('mouseleave', () => {
+            mouse.x = null;
+            mouse.y = null;
+        });
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resize);
+        resize();
+
+        const colors = [
+            'rgba(139, 233, 253, ', 
+            'rgba(0, 255, 136, ', 
+            'rgba(255, 121, 198, '   
+        ];
+
+        const particleCount = 100;
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                vx: (Math.random() - 0.5) * 0.7,
+                vy: (Math.random() - 0.5) * 0.7,
+                size: Math.random() * 2 + 1,
+                colorBase: colors[Math.floor(Math.random() * colors.length)],
+                alpha: Math.random() * 0.5 + 0.3
+            });
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+
+            particles.forEach((p, index) => {
+                p.x += p.vx;
+                p.y += p.vy;
+
+                if (p.x < 0) p.x = width;
+                if (p.x > width) p.x = 0;
+                if (p.y < 0) p.y = height;
+                if (p.y > height) p.y = 0;
+
+  
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = p.colorBase + '0.8)';
+                ctx.fillStyle = p.colorBase + p.alpha + ')';
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+
+                if (mouse.x !== null && mouse.y !== null) {
+                    const dxMouse = p.x - mouse.x;
+                    const dyMouse = p.y - mouse.y;
+                    const distMouse = Math.sqrt(dxMouse * dxMouse + dyMouse * dyMouse);
+                    
+                    if (distMouse < mouse.radius) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(139, 233, 253, ${0.4 * (1 - distMouse / mouse.radius)})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(mouse.x, mouse.y);
+                        ctx.stroke();
+                    }
+                }
+
+                for (let j = index + 1; j < particles.length; j++) {
+                    const p2 = particles[j];
+                    const dx = p.x - p2.x;
+                    const dy = p.y - p2.y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+
+                    if (dist < 135) {
+                        const lineAlpha = (1 - dist / 135) * 0.25;
+                        ctx.shadowBlur = 0;
+                        ctx.strokeStyle = p.colorBase + lineAlpha + ')';
+                        ctx.lineWidth = 0.8;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(p2.x, p2.y);
+                        ctx.stroke();
+                    }
+                }
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

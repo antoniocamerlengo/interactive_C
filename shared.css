@@ -1,0 +1,322 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --white: #ffffff;
+    --muted: #9a9a9a;
+    --dim: #555555;
+    --line: #292929;
+    --green: #00ff88;
+    --red: #ff304f;
+    --keyword: #a78bfa;
+    --type: #ffb86c;
+    --number: #50fa7b;
+    --function: #8be9fd;
+    --text: #d8d8d8;
+    --cell: #171717;
+    --cell-border: #303030;
+    --int: #ff9d3d;
+    --float: #00ff88;
+    --char: #4da6ff;
+    --cyan: #8be9fd;
+    --magenta: #ff79c6;
+
+    --fs-code: 13px;
+    --fs-code-num: 12px;
+    --fs-ui: 12px;
+    --fs-btn: 12px;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000000;
+}
+
+body {
+    font-family: "JetBrains Mono", monospace;
+    color: var(--white);
+    text-align: left;
+}
+
+button {
+    font-family: inherit;
+}
+
+.app {
+    width: 100%;
+    height: 100vh;
+    min-height: 620px;
+    display: flex;
+    flex-direction: column;
+    padding: 28px 48px 24px;
+    overflow: hidden;
+}
+
+/* HEADER */
+.header {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 20px;
+}
+
+.title {
+    font-size: clamp(25px, 3vw, 40px);
+    font-weight: 600;
+    letter-spacing: -1.5px;
+}
+
+.subtitle {
+    color: var(--muted);
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+/* MAIN CONTENT */
+.content {
+    flex: 1;
+    min-height: 0;
+    display: grid;
+    grid-template-columns: minmax(320px, 0.9fr) minmax(520px, 1.35fr);
+    gap: 56px;
+    padding-top: 30px;
+    overflow: hidden;
+}
+
+/* LESSON */
+.lesson {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 10px;
+    overflow-y: auto;
+}
+
+.eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 12px;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+}
+
+.eyebrow::before {
+    content: "";
+    width: 20px;
+    height: 1px;
+    background: var(--white);
+}
+
+.lesson p {
+    max-width: 690px;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.75;
+    text-align: left;
+}
+
+.lesson p strong {
+    color: var(--white);
+    font-weight: 600;
+}
+
+.lesson-section {
+    margin-bottom: 24px;
+}
+
+.nav-bar {
+    position: absolute;
+    top: 28px;
+    right: 48px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+}
+
+.nav-btn {
+    padding: 6px 12px;
+    background: #111;
+    border: 1px solid var(--line);
+    color: var(--white);
+    font-size: 14px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.nav-btn:hover {
+    border-color: var(--white);
+    background: #222;
+}
+
+/* INTERACTION */
+.interaction {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--line);
+}
+
+.interaction-title {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-bottom: 12px;
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+}
+
+.interaction-title::before {
+    content: "";
+    width: 20px;
+    height: 1px;
+    background: var(--white);
+}
+
+.interaction p {
+    color: #999;
+    font-size: 13px;
+    line-height: 1.65;
+    text-align: left;
+}
+
+.interaction strong {
+    color: var(--white);
+    font-weight: 600;
+}
+
+/* WORKSPACE */
+.workspace-column {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.workspace-label {
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+}
+
+.workspace {
+    flex: 1;
+    min-height: 0;
+    border: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    background: #030303;
+    overflow: hidden;
+}
+
+.code-panel {
+    border-bottom: 1px solid var(--line);
+    background: #050505;
+    flex: 0 0 140px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.code-panel.executing {
+    animation: codePulse 0.75s ease-in-out;
+    border-color: #777;
+}
+
+@keyframes codePulse {
+    0% { box-shadow: 0 0 0 rgba(255,255,255,0); }
+    35% { box-shadow: 0 0 20px rgba(255,255,255,0.13), 0 0 45px rgba(255,255,255,0.04); }
+    100% { box-shadow: 0 0 0 rgba(255,255,255,0); }
+}
+
+.code-header {
+    height: 31px;
+    flex-shrink: 0;
+    border-bottom: 1px solid #292929;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: #090909;
+}
+
+.code-content {
+    flex: 1;
+    min-height: 0;
+    padding: 12px 18px;
+    font-size: var(--fs-code);
+    line-height: 1.7;
+    overflow-y: auto;
+}
+
+.code-line { white-space: pre; color: var(--text); }
+.code-number { display: inline-block; width: 28px; color: #444; user-select: none; font-size: var(--fs-code-num); }
+.code-keyword { color: var(--keyword); }
+.code-type { color: var(--type); }
+.code-function { color: var(--function); }
+.code-number-value { color: var(--number); }
+.code-string { color: var(--green); }
+.code-variable { color: var(--white); }
+
+.variable-status {
+    padding: 8px 18px;
+    border-top: 1px solid var(--line);
+    font-size: var(--fs-ui);
+    color: #aaa;
+    flex-shrink: 0;
+    background: #030303;
+}
+
+.variable-status.success { color: var(--green); }
+.variable-status.error { color: var(--red); }
+
+.controls {
+    display: flex;
+    gap: 8px;
+    padding: 12px 18px;
+    border-top: 1px solid var(--line);
+    flex-shrink: 0;
+    background: #030303;
+}
+
+.controls button {
+    flex: 1;
+    background: transparent;
+    color: white;
+    border: 1px solid #444;
+    padding: 10px;
+    font-family: inherit;
+    font-size: var(--fs-btn);
+    cursor: pointer;
+    transition: .15s ease;
+    font-weight: 600;
+    letter-spacing: .6px;
+}
+
+.controls button:hover { border-color: white; }
+.controls button:disabled { opacity: .35; cursor: not-allowed; }
+
+@media (max-width: 1000px) {
+    .app { padding: 22px 28px 20px; }
+    .content { grid-template-columns: 1fr; gap: 20px; overflow: hidden; }
+    .lesson { max-height: 280px; overflow-y: auto; }
+    .workspace { height: 400px; }
+}

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STRUTTURE CONDIZIONALI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        .ampersand { color: var(--keyword); font-weight: 700; }
+        .code-line { transition: background-color 0.3s ease; border-left: 2px solid transparent; }
+        .code-line.active-branch { background: rgba(0, 255, 136, 0.12); border-left: 2px solid var(--green); }
+        .io-input-row { display: flex; gap: 8px; padding: 10px 18px; border-top: 1px solid var(--line); background: #030303; flex-shrink: 0; }
+        .io-input-label { display: flex; align-items: center; flex: 1; min-width: 0; border: 1px solid #333; background: #050505; }
+        .io-input-label span { padding-left: 10px; color: var(--muted); font-size: 14px; white-space: nowrap; }
+        #numberInput { width: 100%; min-width: 0; padding: 9px 10px; border: 0; outline: 0; background: transparent; color: var(--white); font-family: inherit; font-size: 14px; }
+        #numberInput:focus { box-shadow: inset 0 0 0 1px #555; }
+        .io-controls button.execute:hover { border-color: var(--green); color: var(--green); } 
+        .io-controls button.add:hover { border-color: var(--function); color: var(--function); } 
+        .io-controls button.switch-mode { background: #111; }
+        .io-controls button.switch-mode:hover { border-color: var(--keyword); color: var(--keyword); } 
+        .output-panel { min-height: 60px; padding: 12px 18px; border-top: 1px solid var(--line); background: #030303; flex-shrink: 0; display: flex; flex-direction: column; justify-content: center;}
+        .output-label { color: #555; font-size: 12px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+        #output { min-height: 14px; color: #aaa; font-size: 14px; line-height: 1.7; font-weight: 600; }
+        #output.success { color: var(--green); }
+        #output.error { color: var(--red); text-shadow: 0 0 8px rgba(255,48,79, 0.4); }
+    </style>
+</head>
+<body>
+<div class="nav-bar">
+    <button class="nav-btn" onclick="window.location.href='stdio.html'">&lt;</button>
+    <button class="nav-btn" onclick="window.location.href='for.html'">&gt;</button>
+</div>
+<div class="app">
+    <header class="header">
+        <h1 class="title">STRUTTURE CONDIZIONALI</h1>
+        <div class="subtitle">C · IF, ELSE E SWITCH</div>
+    </header>
+    <main class="content">
+        <section class="lesson">
+            <div>
+                <div class="lesson-section">
+                    <div class="eyebrow">01 · IL CONTROLLO DEL FLUSSO</div>
+                    <p>I programmi hanno la costante necessità di prendere decisioni sulla base dei dati durante l'esecuzione. Nel C questo controllo del flusso si effettua mediante la struttura condizionale <strong>if-else</strong>.</p>
+                </div>
+                <div class="lesson-section">
+                    <div class="eyebrow">02 · ELSE IF E OPERATORI</div>
+                    <p>L'<strong>else if</strong> consente di concatenare ed esaminare molteplici condizioni in sequenza tramite operatori di confronto (<strong>==</strong>, <strong>!=</strong>, <strong>&gt;</strong>, <strong>&lt;</strong>) e logici (<strong>&amp;&amp;</strong>, <strong>||</strong>).</p>
+                </div>
+                <div class="lesson-section">
+                    <div class="eyebrow">03 · IL COSTRUTTO SWITCH</div>
+                    <p>Quando si presenta la necessità di valutare molteplici valori assunti da una singola variabile, il C mette a disposizione il costrutto <strong>switch</strong> per mantenere il codice pulito.</p>
+                </div>
+            </div>
+            <div class="interaction">
+                <div class="interaction-title">INTERAZIONE</div>
+                <p>Inserisci un numero per <strong>scelta</strong> ed esegui il codice. Aggiungi diramazioni premendo i bottoni e prova a convertire l'intera logica nel costrutto <strong>switch</strong>.</p>
+            </div>
+        </section>
+        <section class="workspace-column">
+            <div class="workspace-label">// SIMULAZIONE DEL FLUSSO DECISIONALE</div>
+            <div class="workspace">
+                <div class="code-panel" id="editor" style="flex: 1; max-height: 380px;">
+                    <div class="code-header">menu.c</div>
+                    <div class="code-content" id="codeContent"></div>
+                </div>
+                
+                <div class="output-panel">
+                    <div class="output-label">OUTPUT · TERMINALE</div>
+                    <div id="output">in attesa di esecuzione...</div>
+                </div>
+
+                <div class="variable-status io-status info" id="statusMessage">Costrutto iniziale: IF semplice</div>
+                
+                <div class="io-input-row">
+                    <label class="io-input-label" for="numberInput">
+                        <span>Input (scelta = ?):</span>
+                        <input id="numberInput" type="number" step="1" value="1" placeholder="es. 1, 2, 3..." autocomplete="off">
+                    </label>
+                </div>
+                
+                <div class="controls io-controls">
+                    <button class="add" id="addElseIfBtn" type="button">+ ELSE IF</button>
+                    <button class="add" id="addElseBtn" type="button" disabled>+ ELSE</button>
+                    <button class="switch-mode" id="toggleSwitchBtn" type="button">CONVERTI IN SWITCH</button>
+                    <button class="execute" id="executeButton" type="button" style="flex-basis: 100%;">▶ ESEGUI CODICE</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+<script>
+    const codeContent = document.getElementById("codeContent"), output = document.getElementById("output"), statusMessage = document.getElementById("statusMessage"), numberInput = document.getElementById("numberInput"), editor = document.getElementById("editor"), addElseIfBtn = document.getElementById("addElseIfBtn"), addElseBtn = document.getElementById("addElseBtn"), toggleSwitchBtn = document.getElementById("toggleSwitchBtn"), executeButton = document.getElementById("executeButton");
+    let codeComplexity = 1, isSwitchMode = false;
+    function renderCode() {
+        let lines = [], lineNum = 1;
+        lines.push(`<div class="code-line"><span class="code-number">${lineNum++}</span><span class="code-type">int</span> <span class="code-function">main</span>() {</div>`);
+        lines.push(`<div class="code-line"><span class="code-number">${lineNum++}</span>    <span class="code-type">int</span> <span class="code-variable">scelta</span>;</div>`);
+        lines.push(`<div class="code-line"><span class="code-number">${lineNum++}</span>    <span class="code-function">scanf</span>(<span class="code-string">"%d"</span>, <span class="ampersand">&amp;</span><span class="code-variable">scelta</span>);</div>`);
+        lines.push(`<div class="code-line"><span class="code-number">${lineNum++}</span></div>`);
+        if (!isSwitchMode) {
+            lines.push(`<div class="code-line" id="line-if-1"><span class="code-number">${lineNum++}</span>    <span class="code-keyword">if</span> (<span class="code-variable">scelta</span> <span class="code-keyword">==</span> <span class="code-number-value">1</span>) {</div>`);
+            lines.push(`<div class="code-line" id="line-if-2"><span class="code-number">${lineNum++}</span>        <span class="code-function">printf</span>(<span class="code-string">"Pizza"</span>);</div>`);
+            lines.push(`<div class="code-line" id="line-if-3"><span class="code-number">${lineNum++}</span>    }</div>`);
+            if (codeComplexity >= 2) {
+                lines.push(`<div class="code-line" id="line-elif-1"><span class="code-number">${lineNum++}</span>    <span class="code-keyword">else if</span> (<span class="code-variable">scelta</span> <span class="code-keyword">==</span> <span class="code-number-value">2</span>) {</div>`);
+                lines.push(`<div class="code-line" id="line-elif-2"><span class="code-number">${lineNum++}</span>        <span class="code-function">printf</span>(<span class="code-string">"Panino"</span>);</div>`);
+                lines.push(`<div class="code-line" id="line-elif-3"><span class="code-number">${lineNum++}</span>    }</div>`);
+            }
+            if (codeComplexity >= 3) {
+                lines.push(`<div class="code-line" id="line-else-1"><span class="code-number">${lineNum++}</span>    <span class="code-keyword">else</span> {</div>`);
+                lines.push(`<div class="code-line" id="line-else-2"><span class="code-number">${lineNum++}</span>        <span class="code-function">printf</span>(<span class="code-string">"Scelta non valida"</span>);</div>`);
+                lines.push(`<div class="code-line" id="line-else-3"><span class="code-number">${lineNum++}</span>    }</div>`);
+            }
+        } else {
+            lines.push(`<div class="code-line"><span class="code-number">${lineNum++}</span>    <span class="code-keyword">switch</span>(<span class="code-variable">scelta</span>) {</div>`);
+            lines.push(`<div class="code-line" id="line-case1-1"><span class="code-number">${lineNum++}</span>        <span class="code-keyword">case</span> <span class="code-number-value">1</span>:</div>`);
+            lines.push(`<div class="code-line" id="line-case1-2"><span class="code-number">${lineNum++}</span>            <span class="code-function">printf</span>(<span class="code-string">"Pizza"</span>);</div>`);
+            lines.push(`<div class="code-line" id="line-case1-3"><span class="code-number">${lineNum++}</span>            <span class="code-keyword">break</span>;</div>`);
+            if (codeComplexity >= 2) {
+                lines.push(`<div class="code-line" id="line-case2-1"><span class="code-number">${lineNum++}</span>        <span class="code-keyword">case</span> <span class="code-number-value">2</span>:</div>`);
+                lines.push(`<div class="code-line" id="line-case2-2"><span class="code-number">${lineNum++}</span>            <span class="code-function">printf</span>(<span class="code-string">"Panino"</span>);</div>`);
+                lines.push(`<div class="code-line" id="line-case2-3"><span class="code-number">${lineNum++}</span>            <span class="code-keyword">break</span>;</div>`);
+            }
+            if (codeComplexity >= 3) {
+                lines.push(`<div class="code-line" id="line-default-1"><span class="code-number">${lineNum++}</span>        <span class="code-keyword">default</span>:</div>`);
+                lines.push(`<div class="code-line" id="line-default-2"><span class="code-number">${lineNum++}</span>            <span class="code-function">printf</span>(<span class="code-string">"Scelta non valida"</span>);</div>`);
+            }
+            lines.push(`<div class="code-line"><span class="code-number">${lineNum++}</span>    }</div>`);
+        }
+        lines.push(`<div class="code-line"><span class="code-number">${lineNum++}</span></div>`);
+        lines.push(`<div class="code-line"><span class="code-number">${lineNum++}</span>    <span class="code-keyword">return</span> <span class="code-number-value">0</span>;</div>`);
+        lines.push(`<div class="code-line"><span class="code-number">${lineNum++}</span>}</div>`);
+        codeContent.innerHTML = lines.join("");
+        clearHighlights();
+    }
+    function clearHighlights() { document.querySelectorAll('.code-line.active-branch').forEach(el => el.classList.remove('active-branch')); }
+    function highlightLines(ids) { ids.forEach(id => { const el = document.getElementById(id); if (el) el.classList.add('active-branch'); }); }
+    function executeProgram() {
+        clearHighlights();
+        output.textContent = "";
+        output.className = "";
+        pulseEditor();
+        const inputVal = parseInt(numberInput.value, 10);
+        if (isNaN(inputVal)) {
+            setStatus("Errore: Inserisci un valore numerico per 'scelta'.", "error");
+            output.textContent = "Errore a runtime: Input non valido";
+            output.className = "error";
+            return;
+        }
+        if (inputVal === 1) {
+            if (!isSwitchMode) highlightLines(["line-if-1", "line-if-2", "line-if-3"]);
+            else highlightLines(["line-case1-1", "line-case1-2", "line-case1-3"]);
+            output.textContent = "> Pizza";
+            output.className = "success";
+            setStatus("Esecuzione completata: Ramo (scelta == 1) attivato.", "success");
+        } else if (inputVal === 2 && codeComplexity >= 2) {
+            if (!isSwitchMode) highlightLines(["line-elif-1", "line-elif-2", "line-elif-3"]);
+            else highlightLines(["line-case2-1", "line-case2-2", "line-case2-3"]);
+            output.textContent = "> Panino";
+            output.className = "success";
+            setStatus("Esecuzione completata: Ramo (scelta == 2) attivato.", "success");
+        } else if (codeComplexity >= 3) {
+            if (!isSwitchMode) highlightLines(["line-else-1", "line-else-2", "line-else-3"]);
+            else highlightLines(["line-default-1", "line-default-2"]);
+            output.textContent = "> Scelta non valida";
+            output.className = "error";
+            setStatus("Esecuzione completata: Ramo finale di fallback attivato.", "info");
+        } else {
+            output.textContent = "(Nessun output)";
+            setStatus("Nessun blocco di codice eseguito: condizione non gestita.", "error");
+        }
+    }
+    function setStatus(message, type = "info") { statusMessage.className = `variable-status io-status ${type}`; statusMessage.textContent = message; }
+    function pulseEditor() { editor.classList.remove("executing"); void editor.offsetWidth; editor.classList.add("executing"); }
+    addElseIfBtn.addEventListener("click", () => {
+        if (codeComplexity < 2) {
+            codeComplexity = 2;
+            addElseBtn.disabled = false;
+            addElseIfBtn.disabled = true;
+            renderCode();
+            setStatus("Aggiunto 'else if'. La logica gestisce ora due casi.", "info");
+        }
+    });
+    addElseBtn.addEventListener("click", () => {
+        if (codeComplexity < 3) {
+            codeComplexity = 3;
+            addElseBtn.disabled = true;
+            renderCode();
+            setStatus("Aggiunto 'else'. La logica ora intercetta tutti gli scenari imprevisti.", "info");
+        }
+    });
+    toggleSwitchBtn.addEventListener("click", () => {
+        isSwitchMode = !isSwitchMode;
+        if (isSwitchMode) {
+            toggleSwitchBtn.textContent = "CONVERTI IN IF-ELSE";
+            setStatus("Costrutto convertito in 'switch'.", "info");
+        } else {
+            toggleSwitchBtn.textContent = "CONVERTI IN SWITCH";
+            setStatus("Costrutto ripristinato a 'if - else if - else'.", "info");
+        }
+        renderCode();
+        output.textContent = "in attesa di esecuzione...";
+        output.className = "";
+    });
+    executeButton.addEventListener("click", executeProgram);
+    renderCode();
+</script>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CICLO WHILE</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        .block { width: 85px; height: 85px; border: 2px solid; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: bold; border-radius: 8px; transition: all 0.3s ease; }
+        .block-continua { border-color: rgba(139, 233, 253, 0.35); color: rgba(139, 233, 253, 0.5); background: rgba(139, 233, 253, 0.03); }
+        .block-limit { border-color: rgba(255, 121, 198, 0.35); color: rgba(255, 121, 198, 0.5); background: rgba(255, 121, 198, 0.03); }
+        .block.active-continua { border-color: var(--cyan); color: var(--cyan); background: rgba(139,233,253,0.1); box-shadow: 0 0 15px rgba(139,233,253,0.3); }
+        .block.active-limit { border-color: var(--magenta); color: var(--magenta); background: rgba(255,121,198,0.1); box-shadow: 0 0 15px rgba(255,121,198,0.3); }
+        .block.error { border-color: var(--red); color: var(--red); background: rgba(255,48,79,0.1); box-shadow: 0 0 15px rgba(255,48,79,0.3); }
+        .block.flash-continua { border-color: #fff; color: #fff; background: rgba(139,233,253,0.6); box-shadow: 0 0 25px rgba(139,233,253,0.8); }
+        .block.flash-limit { border-color: #fff; color: #fff; background: rgba(255,121,198,0.6); box-shadow: 0 0 25px rgba(255,121,198,0.8); }
+        .op { color: #666; font-size: 28px; font-weight: bold; }
+        #console { margin-top: 10px; color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 14px; min-height: 20px; transition: opacity 0.3s ease; }
+        .fading { opacity: 0; }
+        .simulation-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px 0; gap: 20px; flex-grow: 1; }
+        .blocks { display: flex; align-items: center; gap: 30px; }
+        .block-wrapper { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .block-tag { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #777; }
+    </style>
+</head>
+<body>
+<div class="nav-bar">
+    <button class="nav-btn" onclick="window.location.href='for.html'">&lt;</button>
+    <button class="nav-btn" onclick="window.location.href='dowhile.html'">&gt;</button>
+</div>
+<div class="app">
+    <header class="header">
+        <h1 class="title">CICLO WHILE</h1>
+        <div class="subtitle">C · ITERAZIONI</div>
+    </header>
+    <main class="content">
+        <section class="lesson">
+            <div>
+                <div class="lesson-section">
+                    <div class="eyebrow">01 · IL CICLO WHILE</div>
+                    <p>Il ciclo <strong>while</strong> è la struttura iterativa fondamentale quando non si conosce a priori il numero di ripetizioni. Valuta la condizione <em>prima</em> di ogni esecuzione.</p>
+                </div>
+                <div class="lesson-section">
+                    <div class="eyebrow">02 · WHILE VS FOR</div>
+                    <p>A differenza del <strong>for</strong>, il <strong>while</strong> richiede una gestione manuale più esplicita, permettendo di costruire cicli guidati interamente da eventi esterni o input utente.</p>
+                </div>
+            </div>
+            <div class="interaction">
+                <div class="interaction-title">INTERAZIONE</div>
+                <p>I pulsanti simulano una <strong>scanf</strong>. Il ciclo continuerà finché il valore di <code>continua</code> rimane 1. Premi "0" per terminare.</p>
+            </div>
+        </section>
+        <section class="workspace-column">
+            <div class="workspace-label">// SIMULAZIONE CICLO</div>
+            <div class="workspace">
+                <div class="code-panel">
+                    <div class="code-header">while.c</div>
+                    <div class="code-content">
+                        <div class="code-line"><span class="code-number">1</span><span class="code-type">int</span> <span class="code-function">main</span>() {</div>
+                        <div class="code-line"><span class="code-number">2</span>    <span class="code-type">int</span> continua = <span class="code-number-value">1</span>;</div>
+                        <div class="code-line"><span class="code-number">3</span>    <span class="code-keyword">while</span> (continua == <span class="code-number-value">1</span>) {</div>
+                        <div class="code-line"><span class="code-number">4</span>        <span class="code-function">printf</span>(<span class="code-string">"Operazione in corso...\n"</span>);</div>
+                        <div class="code-line"><span class="code-number">5</span>        <span class="code-function">scanf</span>(<span class="code-string">"%d"</span>, &amp;continua);</div>
+                        <div class="code-line"><span class="code-number">6</span>    }</div>
+                        <div class="code-line"><span class="code-number">7</span>    <span class="code-keyword">return</span> <span class="code-number-value">0</span>;</div>
+                        <div class="code-line"><span class="code-number">8</span>}</div>
+                    </div>
+                </div>
+                
+                <div class="simulation-container">
+                    <div class="blocks">
+                        <div class="block-wrapper">
+                            <span class="block-tag">continua</span>
+                            <div class="block block-continua" id="box-continua">1</div>
+                        </div>
+                        <div class="op">==</div>
+                        <div class="block-wrapper">
+                            <span class="block-tag">Controllo</span>
+                            <div class="block block-limit" id="box-limit">1</div>
+                        </div>
+                    </div>
+                    <div id="console"></div>
+                </div>
+                
+                <div class="controls">
+                    <button id="btn-start">AVVIA PROGRAMMA</button>
+                    <button id="btn-input-1" disabled>1</button>
+                    <button id="btn-input-0" disabled>0</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+<script>
+    let continua = 1;
+    const boxContinua = document.getElementById("box-continua"), boxLimit = document.getElementById("box-limit"), output = document.getElementById("console"), btnStart = document.getElementById("btn-start"), btnInput1 = document.getElementById("btn-input-1"), btnInput0 = document.getElementById("btn-input-0");
+    function log(text) {
+        output.classList.add('fading');
+        setTimeout(() => {
+            output.textContent = text;
+            output.classList.remove('fading');
+        }, 300);
+    }
+    function checkCondition() {
+        boxContinua.classList.add("flash-continua");
+        boxLimit.classList.add("flash-limit");
+        setTimeout(() => {
+            boxContinua.classList.remove("flash-continua");
+            boxLimit.classList.remove("flash-limit");
+        }, 300);
+        if (continua === 1) {
+            log("> Operazione in corso...");
+            boxContinua.classList.add("active-continua");
+            boxLimit.classList.add("active-limit");
+            btnInput1.disabled = false;
+            btnInput0.disabled = false;
+            btnStart.disabled = true;
+        } else {
+            log("> Ciclo terminato.");
+            boxContinua.classList.add("error");
+            boxLimit.classList.add("error");
+            btnInput1.disabled = true;
+            btnInput0.disabled = true;
+            btnStart.disabled = false;
+            btnStart.textContent = "RIAVVIA";
+        }
+    }
+    btnStart.addEventListener("click", () => {
+        continua = 1;
+        boxContinua.textContent = 1;
+        boxContinua.classList.remove("error");
+        boxLimit.classList.remove("error");
+        checkCondition();
+    });
+    btnInput1.addEventListener("click", () => {
+        continua = 1;
+        boxContinua.textContent = 1;
+        checkCondition();
+    });
+    btnInput0.addEventListener("click", () => {
+        continua = 0;
+        boxContinua.textContent = 0;
+        checkCondition();
+    });
+</script>
+</body>
+</html>

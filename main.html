@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LA FUNZIONE MAIN</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="shared.css">
+    <style>
+        .simulation-visual-area { flex: 1; min-height: 0; position: relative; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .connection { position: absolute; left: 50%; top: 15px; bottom: 65px; width: 1px; transform: translateX(-50%); background: linear-gradient(to bottom, transparent, #333 18%, #333 82%, transparent); }
+        .connection::before, .connection::after { content: ""; position: absolute; left: 50%; width: 5px; height: 5px; transform: translateX(-50%); border: 1px solid #555; border-radius: 50%; background: #000; }
+        .connection::before { top: 0; } .connection::after { bottom: 0; }
+        .signal { position: absolute; left: 50%; top: 20px; width: 9px; height: 9px; margin-left: -4px; border-radius: 50%; background: #fff; box-shadow: 0 0 12px rgba(255,255,255,.8); opacity: 0; z-index: 10; pointer-events: none; }
+        .signal.to-code { animation: signalToCode 0.8s cubic-bezier(.45,.05,.55,.95) forwards; }
+        @keyframes signalToCode { 0% { opacity: 0; transform: translateY(140px); } 15% { opacity: 1; } 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(5px); } }
+        .return-packet { position: absolute; left: 50%; top: 45px; min-width: 46px; height: 30px; padding: 0 10px; display: flex; justify-content: center; align-items: center; transform: translateX(-50%); border: 1px solid currentColor; background: #000; font-size: 12px; font-weight: 700; opacity: 0; z-index: 11; pointer-events: none; }
+        .return-packet.success { color: var(--green); animation: packetToOs 1s 0.72s cubic-bezier(.45,.05,.55,.95) forwards; }
+        .return-packet.error { color: var(--red); animation: packetToOs 1s 0.72s cubic-bezier(.45,.05,.55,.95) forwards; }
+        @keyframes packetToOs { 0% { opacity: 0; transform: translate(-50%, 0) scale(.75); } 12% { opacity: 1; transform: translate(-50%, 0) scale(1); } 100% { opacity: 1; transform: translate(-50%, 110px) scale(1); } }
+        .os { position: absolute; left: 50%; bottom: 15px; transform: translateX(-50%); width: 240px; height: 70px; border: 1px solid #444; display: flex; align-items: center; padding: 10px 12px; background: #030303; transition: border-color .25s ease, box-shadow .25s ease, transform .1s ease; z-index: 4; }
+        .pc-icon { position: relative; width: 52px; height: 36px; border: 2px solid #888; margin-right: 12px; flex-shrink: 0; }
+        .pc-icon::before { content: ""; position: absolute; left: 6px; right: 6px; bottom: -6px; height: 2px; background: #888; }
+        .pc-icon::after { content: ""; position: absolute; left: 18px; bottom: -6px; width: 14px; height: 6px; border-left: 2px solid #888; border-right: 2px solid #888; }
+        .os-info { min-width: 0; }
+        .os-name { font-weight: 600; margin-bottom: 4px; font-size: 12px; }
+        .os-status { color: #666; transition: color .2s ease; font-size: 11px; }
+        .os-result { position: absolute; right: -1px; top: -25px; padding: 4px 8px; border: 1px solid currentColor; background: #000; font-weight: 700; letter-spacing: .7px; opacity: 0; transform: translateY(5px); transition: opacity .2s ease, transform .2s ease; font-size: 12px; }
+        .os.success { border-color: var(--green); box-shadow: 0 0 20px rgba(0,255,136,.14), 0 0 55px rgba(0,255,136,.05); }
+        .os.success .os-status { color: var(--green); }
+        .os.success .os-result { color: var(--green); opacity: 1; transform: translateY(0); }
+        .os.error { border-color: var(--red); box-shadow: 0 0 22px rgba(255,48,79,.18), 0 0 60px rgba(255,48,79,.06); }
+        .os.error .os-status { color: var(--red); }
+        .os.error .os-result { color: var(--red); opacity: 1; transform: translateY(0); }
+        .os.shake { animation: shake .48s cubic-bezier(.36,.07,.19,.97); }
+        @keyframes shake { 0%, 100% { transform: translateX(-50%); } 15% { transform: translateX(calc(-50% - 11px)); } 30% { transform: translateX(calc(-50% + 10px)); } 45% { transform: translateX(calc(-50% - 8px)); } 60% { transform: translateX(calc(-50% + 7px)); } 75% { transform: translateX(calc(-50% - 4px)); } 90% { transform: translateX(calc(-50% + 3px)); } }
+        .controls button.play:hover { border-color: var(--green); color: var(--green); }
+        .controls button.bug:hover { border-color: var(--red); color: var(--red); }
+    </style>
+</head>
+<body>
+<div class="nav-bar">
+    <button class="nav-btn" onclick="window.location.href='index.html'">&lt;</button>
+    <button class="nav-btn" onclick="window.location.href='memoria.html'">&gt;</button>
+</div>
+<div class="app">
+    <header class="header">
+        <h1 class="title">LA FUNZIONE MAIN</h1>
+        <div class="subtitle">C · PROGRAM EXECUTION</div>
+    </header>
+    <main class="content">
+        <section class="lesson">
+            <div>
+                <div class="lesson-section">
+                    <div class="eyebrow">01 · INTRODUZIONE</div>
+                    <p>Ogni programma scritto in C possiede una radice fondamentale: la funzione <strong>main</strong>. Quando un programma viene mandato in esecuzione dal sistema operativo, tutto ha inizio e tutto trova la sua conclusione all'interno di questo blocco di codice.</p>
+                </div>
+                <div class="lesson-section">
+                    <div class="eyebrow">02 · LA FIRMA DELLA FUNZIONE</div>
+                    <p>Analizzando l'intestazione, è possibile notare la parola chiave <strong>int</strong> collocata subito prima del nome della funzione. Questa dichiarazione serve a comunicare al sistema operativo che la funzione restituirà un valore intero.</p>
+                </div>
+                <div class="lesson-section">
+                    <div class="eyebrow">03 · IL VALORE DI RITORNO</div>
+                    <p>Per regola universale, ogni valore di ritorno diverso da zero segnala al sistema che il programma ha riscontrato un'anomalia. L'istruzione <strong>return 0;</strong> garantisce invece che l'esecuzione sia terminata con successo.</p>
+                </div>
+            </div>
+            <div class="interaction">
+                <div class="interaction-title">INTERAZIONE</div>
+                <p>Premi <strong>PLAY</strong> per osservare il valore restituito da <strong>main</strong> tornare al sistema operativo.</p>
+            </div>
+        </section>
+        <section class="workspace-column">
+            <div class="workspace-label">// SIMULAZIONE DEL PROCESSO</div>
+            <div class="workspace">
+                <div class="code-panel" id="editor">
+                    <div class="code-header">main.c</div>
+                    <div class="code-content" id="code"></div>
+                </div>
+                <div class="simulation-visual-area">
+                    <div class="connection"></div>
+                    <div class="signal" id="signal"></div>
+                    <div class="return-packet" id="returnPacket"></div>
+                    <div class="os" id="os">
+                        <div class="pc-icon"></div>
+                        <div class="os-info">
+                            <div class="os-name">Sistema Operativo (OS)</div>
+                            <div class="os-status" id="osStatus">in attesa...</div>
+                        </div>
+                        <div class="os-result" id="osResult">✓ SUCCESSO!</div>
+                    </div>
+                </div>
+                <div class="variable-status" id="statusMessage">programma pronto</div>
+                <div class="controls">
+                    <button class="play" id="playButton" type="button">▶️ PLAY</button>
+                    <button class="bug" id="bugButton" type="button">🐛 ADD BUG</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+<script>
+    const playButton = document.getElementById("playButton"), bugButton = document.getElementById("bugButton"), editor = document.getElementById("editor"), code = document.getElementById("code"), signal = document.getElementById("signal"), returnPacket = document.getElementById("returnPacket"), os = document.getElementById("os"), osStatus = document.getElementById("osStatus"), osResult = document.getElementById("osResult"), statusMessage = document.getElementById("statusMessage");
+    let hasBug = false, isRunning = false;
+    function renderNormalCode() { code.innerHTML = '<div class="code-line"><span class="code-number">1</span><span class="code-type">int</span> <span class="code-function">main</span>() {</div><div class="code-line"><span class="code-number">2</span>    <span class="code-keyword">return</span> <span class="code-number-value">0</span>;</div><div class="code-line"><span class="code-number">3</span>}</div>'; }
+    function renderBugCode() { code.innerHTML = '<div class="code-line"><span class="code-number">1</span><span class="code-type">int</span> <span class="code-function">main</span>() {</div><div class="code-line"><span class="code-number">2</span>    <span class="code-type">int</span> error = <span class="code-number-value">404</span>;</div><div class="code-line"><span class="code-number">3</span>    <span class="code-keyword">return</span> error;</div><div class="code-line"><span class="code-number">4</span>}</div>'; }
+    function clearState() { os.classList.remove("success", "error", "shake"); signal.className = "signal"; returnPacket.className = "return-packet"; returnPacket.textContent = ""; osStatus.textContent = "in attesa..."; osResult.textContent = hasBug ? "⚠ ERRORE!" : "✓ SUCCESSO!"; statusMessage.className = "variable-status"; statusMessage.textContent = "programma pronto"; }
+    function playProgram() {
+        if (isRunning) return;
+        isRunning = true;
+        playButton.disabled = true;
+        bugButton.disabled = true;
+        clearState();
+        osStatus.textContent = "avvio programma...";
+        statusMessage.textContent = "il sistema operativo avvia main()";
+        signal.className = "signal";
+        void signal.offsetWidth;
+        signal.classList.add("to-code");
+        setTimeout(() => {
+            editor.classList.remove("executing");
+            void editor.offsetWidth;
+            editor.classList.add("executing");
+            osStatus.textContent = "main() in esecuzione...";
+            statusMessage.textContent = "il codice sta eseguendo...";
+        }, 650);
+        setTimeout(() => {
+            returnPacket.textContent = hasBug ? "404" : "0";
+            returnPacket.className = "return-packet " + (hasBug ? "error" : "success");
+            osStatus.textContent = hasBug ? "valore restituito: 404" : "valore restituito: 0";
+            statusMessage.textContent = hasBug ? "main() ha restituito un errore" : "main() ha restituito 0";
+        }, 800);
+        setTimeout(() => { if (hasBug) showError(); else showSuccess(); }, 1740);
+        setTimeout(() => { playButton.disabled = false; bugButton.disabled = false; isRunning = false; }, 2250);
+    }
+    function showSuccess() { os.classList.remove("error"); void os.offsetWidth; os.classList.add("success"); osStatus.textContent = "programma terminato correttamente"; osResult.textContent = "✓ SUCCESSO!"; statusMessage.className = "variable-status success"; statusMessage.textContent = "return 0 → esecuzione riuscita"; }
+    function showError() { os.classList.remove("success"); void os.offsetWidth; os.classList.add("error", "shake"); osStatus.textContent = "programma terminato con errore"; osResult.textContent = "✕ ERRORE CRITICO!"; statusMessage.className = "variable-status error"; statusMessage.textContent = "return 404 → esecuzione fallita"; setTimeout(() => os.classList.remove("shake"), 500); }
+    bugButton.addEventListener("click", () => {
+        if (isRunning) return;
+        hasBug = !hasBug;
+        clearState();
+        if (hasBug) { renderBugCode(); bugButton.textContent = "🔄 RESET CODE"; statusMessage.textContent = "errore inserito: il programma ora restituisce 404"; }
+        else { renderNormalCode(); bugButton.textContent = "🐛 ADD BUG"; statusMessage.textContent = "codice ripristinato"; }
+    });
+    playButton.addEventListener("click", playProgram);
+    renderNormalCode();
+    clearState();
+</script>
+</body>
+</html>
