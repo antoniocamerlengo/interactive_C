@@ -388,7 +388,7 @@ th {
 #allocFloat:hover { color: var(--float); border-color: var(--float); }
 #allocChar:hover { color: var(--char); border-color: var(--char); }
 
-/* RESPONSIVE MEDIA QUERIES */
+/* RESPONSIVE MEDIA QUERIES (CORRETTE) */
 @media (max-width: 960px) {
     html, body {
         height: auto !important;
@@ -401,7 +401,7 @@ th {
         min-height: 100vh;
         overflow: visible !important;
         position: relative;
-        padding: 20px;
+        padding: 20px 16px;
     }
 
     .nav-bar {
@@ -409,7 +409,7 @@ th {
         top: 0;
         right: 0;
         width: 100%;
-        justify-content: center;
+        justify-content: flex-start;
         margin-bottom: 16px;
     }
 
@@ -420,28 +420,52 @@ th {
     }
 
     .content {
-        grid-template-columns: 1fr;
+        display: flex;
+        flex-direction: column;
         gap: 28px;
         overflow: visible;
+        height: auto;
+        min-height: auto;
     }
 
     .lesson {
         overflow-y: visible;
+        height: auto;
+    }
+
+    .workspace-column {
+        height: auto;
+        min-height: auto;
+        overflow: visible;
     }
 
     .workspace {
         height: auto;
-        min-height: 480px;
+        min-height: auto;
+        overflow: visible;
     }
 
-    .ram-grid {
-        width: 100%;
-        max-width: 380px;
+    .code-panel {
+        max-height: 180px;
+        flex: none;
     }
 
     .code-content {
         overflow-x: auto;
+        overflow-y: auto;
         -webkit-overflow-scrolling: touch;
+    }
+
+    .ram-area {
+        flex: none;
+        min-height: 320px;
+        padding: 16px 8px;
+    }
+
+    .ram-grid {
+        width: 100%;
+        max-width: 340px;
+        height: auto;
     }
 }
 
@@ -471,6 +495,16 @@ th {
     }
 
     .ram-area {
-        padding: 6px;
+        padding: 8px 4px;
+        min-height: 280px;
+    }
+
+    .ram-grid {
+        max-width: 280px;
+        gap: 2px;
+    }
+
+    .cell {
+        font-size: 10px;
     }
 }
