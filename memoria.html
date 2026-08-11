@@ -89,63 +89,37 @@
     const TOTAL_CELLS = 64, memory = [], variables = [], ramGrid = document.getElementById("ramGrid"), codeContent = document.getElementById("codeContent"), usedCounter = document.getElementById("usedCounter"), variableStatus = document.getElementById("variableStatus");
     let nextVariableId = 1;
 
-    for (let i = 0; i < TOTAL_CELLS; i++) {
-        memory.push({ value: Math.floor(Math.random() * 199) - 99, variableId: null, initialized: false });
-    }
+    for (let i = 0; i < TOTAL_CELLS; i++) memory.push({ value: Math.floor(Math.random() * 199) - 99, variableId: null, initialized: false });
 
     function getRandomHue() { return Math.floor(Math.random() * 360); }
 
     function renderMemory() {
         ramGrid.innerHTML = "";
-        let i = 0;
-
-        while (i < TOTAL_CELLS) {
-            const cell = memory[i];
-            const variable = cell.variableId !== null ? variables.find(v => v.id === cell.variableId) : null;
-
-            // Se la cella appartiene a una variabile E la variabile è inizializzata -> blocco unificato
-            if (variable && variable.initialized) {
-                const size = variable.cells.length;
-                const div = document.createElement("div");
-                div.className = "cell initialized";
-                div.style.gridColumn = `span ${size}`;
-
+        memory.forEach(cell => {
+            const div = document.createElement("div");
+            div.className = "cell";
+            div.textContent = cell.value;
+            if (cell.variableId !== null) {
+                const variable = variables.find(v => v.id === cell.variableId);
                 const hue = variable.hue;
                 div.style.borderColor = `hsl(${hue}, 100%, 65%)`;
                 div.style.boxShadow = `0 0 8px hsla(${hue}, 100%, 65%, 0.4), inset 0 0 8px hsla(${hue}, 100%, 65%, 0.2)`;
-                div.style.backgroundColor = `hsla(${hue}, 100%, 65%, 0.35)`;
-                div.style.color = "#ffffff";
-                div.style.textShadow = `0 0 5px hsla(${hue}, 100%, 65%, 0.8)`;
-                
-                // Valore singolo e centrato
-                div.textContent = cell.value;
-
-                ramGrid.appendChild(div);
-                i += size;
-            } else {
-                // Cella vuota O cella di variabile allocata ma non ancora inizializzata (1 div di 1 byte)
-                const div = document.createElement("div");
-                div.className = "cell";
-                div.textContent = cell.value;
-
-                if (variable) {
-                    const hue = variable.hue;
-                    div.style.borderColor = `hsl(${hue}, 100%, 65%)`;
-                    div.style.boxShadow = `0 0 8px hsla(${hue}, 100%, 65%, 0.4), inset 0 0 8px hsla(${hue}, 100%, 65%, 0.2)`;
+                if (cell.initialized) {
+                    div.style.backgroundColor = `hsla(${hue}, 100%, 65%, 0.35)`;
+                    div.style.color = "#ffffff";
+                    div.style.textShadow = `0 0 5px hsla(${hue}, 100%, 65%, 0.8)`;
+                    div.classList.add("initialized");
+                } else {
                     div.style.backgroundColor = `hsla(${hue}, 100%, 65%, 0.1)`;
                     div.style.color = `hsla(${hue}, 100%, 80%, 0.5)`;
                 }
-
-                ramGrid.appendChild(div);
-                i++;
             }
-        }
-
+            ramGrid.appendChild(div);
+        });
         usedCounter.textContent = memory.filter(c => c.variableId !== null).length;
     }
 
     function findFreeBlock(size) {
-        // Cerca blocchi contigui senza restrizioni sulla fine della riga
         for (let i = 0; i <= TOTAL_CELLS - size; i++) {
             const indexes = [];
             for (let j = 0; j < size; j++) indexes.push(i + j);
@@ -169,11 +143,13 @@
         const variable = variables.find(v => !v.initialized);
         if (!variable) { variableStatus.textContent = "Tutte le variabili sono inizializzate."; return; }
         variable.initialized = true;
-        let value = variable.type === "int" ? 10 : variable.type === "float" ? 1.5 : "'A'";
-        variable.cells.forEach(index => {
-            memory[index].value = value;
+        let value = variable.type === "int" ? 10 : variable.type === "float" ? 1.5 : "A";
+
+        variable.cells.forEach((index, i) => {
+            memory[index].value = (i === 0) ? value : 0; // Valore solo nel 1° byte, 0 nei successivi
             memory[index].initialized = true;
         });
+
         renderMemory();
         updateCode();
         variableStatus.textContent = `Inizializzata var${variable.id}`;
